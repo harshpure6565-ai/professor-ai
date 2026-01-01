@@ -1,25 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Professor AI</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professor AI - Your Personal Teaching Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Google AdSense - Replace with your own publisher ID -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXX"
+     crossorigin="anonymous"></script>
 </head>
 <body>
-<div id="app">
-  <!-- Professor Character -->
-  <img src="https://i.imgur.com/3Dprofessor.png" id="professor" alt="Professor">
+    <!-- Animated background captions -->
+    <div class="captions-background" id="captionsBackground"></div>
 
-  <!-- Chat Box -->
-  <div id="chat">
-    <div id="messages"></div>
-    <input type="text" id="userInput" placeholder="Type your question...">
-    <button id="sendBtn">Send</button>
-    <button id="voiceBtn">🎤</button>
-  </div>
-</div>
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Professor Character Section -->
+        <div class="professor-section">
+            <div class="professor-card">
+                <div class="professor-image">
+                    <div class="avatar">
+                        <span class="avatar-icon">👨‍🏫</span>
+                    </div>
+                    <div class="status-indicator">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Ready to teach</span>
+                    </div>
+                </div>
+                <h2 class="professor-name">Professor AI</h2>
+                <p class="professor-tagline">Your friendly AI teacher who explains everything step-by-step</p>
+                
+                <!-- Daily Usage Counter -->
+                <div class="usage-counter">
+                    <span id="usageCount">0</span> / 10 questions today
+                </div>
+            </div>
+            
+            <!-- Ad Space 1 -->
+            <div class="ad-container">
+                <!-- AdSense ad unit -->
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
 
-<script src="script.js"></script>
+        <!-- Chat Section -->
+        <div class="chat-section">
+            <!-- Header -->
+            <div class="chat-header">
+                <h1>Ask Professor AI Anything</h1>
+                <p>I'll teach you step-by-step in your language 🌍</p>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-container" id="chatContainer">
+                <!-- Welcome Message -->
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <p>👋 Hello! I'm Professor AI, your personal teacher.</p>
+                        <p>Ask me anything, and I'll explain it clearly with examples. I can understand English, Hindi, Hinglish, Marathi, and Urdu!</p>
+                        <p>How can I help you learn today?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Section -->
+            <div class="input-section">
+                <div class="input-container">
+                    <!-- Camera Button (Placeholder) -->
+                    <button class="input-btn camera-btn" id="cameraBtn" title="Camera (Coming Soon)">
+                        📷
+                    </button>
+                    
+                    <!-- Text Input -->
+                    <input 
+                        type="text" 
+                        id="userInput" 
+                        placeholder="Type your question here..."
+                        maxlength="500"
+                    >
+                    
+                    <!-- Mic Button -->
+                    <button class="input-btn mic-btn" id="micBtn" title="Voice Input">
+                        🎤
+                    </button>
+                    
+                    <!-- Send Button -->
+                    <button class="input-btn send-btn" id="sendBtn" title="Send Message">
+                        ➤
+                    </button>
+                </div>
+                
+                <!-- Character Counter -->
+                <div class="char-counter">
+                    <span id="charCount">0</span> / 500
+                </div>
+            </div>
+
+            <!-- Ad Space 2 -->
+            <div class="ad-container">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-XXXXXXXXXX"
+                     data-ad-slot="XXXXXXXXXX"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Professor is thinking...</p>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
