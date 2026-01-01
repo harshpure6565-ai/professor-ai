@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>Professor AI</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 body{margin:0;height:100vh;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;color:white}
 .glass{width:95%;height:90%;background:rgba(255,255,255,0.1);backdrop-filter:blur(15px);border-radius:20px;display:flex;padding:20px;box-sizing:border-box}
@@ -17,6 +16,7 @@ body{margin:0;height:100vh;background:linear-gradient(135deg,#0f2027,#203a43,#2c
 input{flex:1;padding:12px;border-radius:10px;border:none;outline:none}
 button{margin-left:10px;padding:12px 20px;border:none;border-radius:10px;background:#00c6ff;color:black;font-weight:bold;cursor:pointer}
 button:active{transform:scale(0.95)}
+select{margin-right:10px;padding:10px;border-radius:8px;border:none;outline:none;background:white;color:black;font-weight:bold}
 </style>
 </head>
 <body>
@@ -32,6 +32,13 @@ button:active{transform:scale(0.95)}
     </div>
 
     <div class="inputBox">
+      <select id="langSelect">
+        <option value="en-US">English</option>
+        <option value="hi-IN">Hindi</option>
+        <option value="es-ES">Spanish</option>
+        <option value="fr-FR">French</option>
+        <option value="zh-CN">Chinese</option>
+      </select>
       <input id="question" placeholder="Ask your question...">
       <button onclick="askAI()">Ask</button>
       <button onclick="startMic()">🎙️</button>
@@ -60,7 +67,7 @@ let recognition;
 function startMic(){
   if(!('webkitSpeechRecognition' in window)) return alert('Mic not supported');
   recognition = new webkitSpeechRecognition();
-  recognition.lang = 'en-US';
+  recognition.lang = document.getElementById("langSelect").value;
   recognition.interimResults = false;
   recognition.onresult = function(event){
     document.getElementById("question").value = event.results[0][0].transcript;
@@ -73,18 +80,19 @@ async function askAI(){
   if(!checkLimit()){document.getElementById("output").textContent="Daily limit reached (10/day)";return;}
   const q=document.getElementById("question").value;
   if(!q) return;
+  const selectedLang = document.getElementById("langSelect").value;
   const out=document.getElementById("output");
   out.textContent="👨‍🏫 Professor is thinking...\n\n";
   try{
     const res = await fetch("https://jolly-sky-a255.harshpure6565.workers.dev/ask",{
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({question:q})
+      body:JSON.stringify({question:q,lang:selectedLang})
     });
     const data = await res.json();
     out.textContent = data.answer || "No response from AI.";
     incrementCount();
-    speakAnswer(data.answer);
+    speakAnswer(data.answer, selectedLang);
   }catch(e){
     out.textContent="Error connecting to AI.";
     console.error(e);
@@ -92,10 +100,10 @@ async function askAI(){
 }
 
 // ===== Text to Speech =====
-function speakAnswer(text){
+function speakAnswer(text, lang){
   if(!window.speechSynthesis) return;
   const utter=new SpeechSynthesisUtterance(text);
-  utter.lang="en-US"; // adjust per language
+  utter.lang = lang;
   window.speechSynthesis.speak(utter);
 }
 </script>
