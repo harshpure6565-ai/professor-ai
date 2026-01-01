@@ -6,97 +6,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-  font-family: Arial, sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.glass {
-  width: 95%;
-  height: 90%;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(15px);
-  border-radius: 20px;
-  display: flex;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.character {
-  width: 30%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.character img {
-  width: 100%;
-  max-width: 250px;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0); }
-}
-
-.chat {
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-}
-
-.output {
-  flex: 1;
-  background: rgba(0,0,0,0.3);
-  border-radius: 15px;
-  padding: 15px;
-  overflow-y: auto;
-  white-space: pre-wrap;
-}
-
-.inputBox {
-  display: flex;
-  margin-top: 10px;
-}
-
-input {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  outline: none;
-}
-
-button {
-  margin-left: 10px;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  background: #00c6ff;
-  color: black;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-button:active {
-  transform: scale(0.95);
-}
+body{margin:0;height:100vh;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;color:white}
+.glass{width:95%;height:90%;background:rgba(255,255,255,0.1);backdrop-filter:blur(15px);border-radius:20px;display:flex;padding:20px;box-sizing:border-box}
+.character{width:30%;display:flex;align-items:center;justify-content:center}
+.character img{width:100%;max-width:250px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
+.chat{width:70%;display:flex;flex-direction:column}
+.output{flex:1;background:rgba(0,0,0,0.3);border-radius:15px;padding:15px;overflow-y:auto;white-space:pre-wrap}
+.inputBox{display:flex;margin-top:10px}
+input{flex:1;padding:12px;border-radius:10px;border:none;outline:none}
+button{margin-left:10px;padding:12px 20px;border:none;border-radius:10px;background:#00c6ff;color:black;font-weight:bold;cursor:pointer}
+button:active{transform:scale(0.95)}
 </style>
 </head>
-
 <body>
 
 <div class="glass">
   <div class="character">
-    <!-- Replace with your professor image -->
     <img src="https://i.imgur.com/6XgKQ5D.png" alt="Professor">
   </div>
 
@@ -108,66 +34,69 @@ button:active {
     <div class="inputBox">
       <input id="question" placeholder="Ask your question...">
       <button onclick="askAI()">Ask</button>
+      <button onclick="startMic()">🎙️</button>
     </div>
   </div>
 </div>
 
 <script>
-// ===== DAILY LIMIT =====
 const DAILY_LIMIT = 10;
 const userKey = "prof_ai_user_limit";
 
-// Initialize user storage in localStorage
-if(!localStorage.getItem(userKey)) {
-  localStorage.setItem(userKey, JSON.stringify({count:0, date: new Date().toDateString()}));
+if(!localStorage.getItem(userKey)){
+  localStorage.setItem(userKey, JSON.stringify({count:0,date:new Date().toDateString()}));
 }
 
-function checkLimit() {
+function checkLimit(){
   let userData = JSON.parse(localStorage.getItem(userKey));
   let today = new Date().toDateString();
-  if(userData.date !== today) {
-    userData.count = 0;
-    userData.date = today;
-    localStorage.setItem(userKey, JSON.stringify(userData));
-  }
-  return userData.count < DAILY_LIMIT;
+  if(userData.date!==today){userData.count=0;userData.date=today;localStorage.setItem(userKey,JSON.stringify(userData));}
+  return userData.count<DAILY_LIMIT;
+}
+function incrementCount(){let userData=JSON.parse(localStorage.getItem(userKey));userData.count+=1;localStorage.setItem(userKey,JSON.stringify(userData));}
+
+// ===== Mic Setup =====
+let recognition;
+function startMic(){
+  if(!('webkitSpeechRecognition' in window)) return alert('Mic not supported');
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.onresult = function(event){
+    document.getElementById("question").value = event.results[0][0].transcript;
+  };
+  recognition.start();
 }
 
-function incrementCount() {
-  let userData = JSON.parse(localStorage.getItem(userKey));
-  userData.count += 1;
-  localStorage.setItem(userKey, JSON.stringify(userData));
-}
-
-// ===== AI ASK FUNCTION =====
-async function askAI() {
-  if(!checkLimit()) {
-    document.getElementById("output").textContent = "Daily limit reached (10/day)";
-    return;
-  }
-
-  const q = document.getElementById("question").value;
-  const out = document.getElementById("output");
+// ===== Ask AI =====
+async function askAI(){
+  if(!checkLimit()){document.getElementById("output").textContent="Daily limit reached (10/day)";return;}
+  const q=document.getElementById("question").value;
   if(!q) return;
-
-  out.textContent = "👨‍🏫 Professor is thinking...\n\n";
-
-  try {
-    const res = await fetch(
-      "https://jolly-sky-a255.harshpure6565.workers.dev/ask",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: q })
-      }
-    );
+  const out=document.getElementById("output");
+  out.textContent="👨‍🏫 Professor is thinking...\n\n";
+  try{
+    const res = await fetch("https://jolly-sky-a255.harshpure6565.workers.dev/ask",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({question:q})
+    });
     const data = await res.json();
     out.textContent = data.answer || "No response from AI.";
     incrementCount();
-  } catch(e) {
-    out.textContent = "Error connecting to AI.";
+    speakAnswer(data.answer);
+  }catch(e){
+    out.textContent="Error connecting to AI.";
     console.error(e);
   }
+}
+
+// ===== Text to Speech =====
+function speakAnswer(text){
+  if(!window.speechSynthesis) return;
+  const utter=new SpeechSynthesisUtterance(text);
+  utter.lang="en-US"; // adjust per language
+  window.speechSynthesis.speak(utter);
 }
 </script>
 
