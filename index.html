@@ -9,7 +9,7 @@
 body {
   margin: 0;
   height: 100vh;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
   font-family: Arial, sans-serif;
   display: flex;
   align-items: center;
@@ -83,6 +83,7 @@ button {
   background: #00c6ff;
   color: black;
   font-weight: bold;
+  cursor: pointer;
 }
 
 button:active {
@@ -94,16 +95,14 @@ button:active {
 <body>
 
 <div class="glass">
-
   <div class="character">
-    <!-- Replace src with your professor image -->
+    <!-- Replace with your professor image -->
     <img src="https://i.imgur.com/6XgKQ5D.png" alt="Professor">
   </div>
 
   <div class="chat">
     <div id="output" class="output">
-👨‍🏫 Professor AI ready.
-Ask me anything.
+👨‍🏫 Professor AI ready. Ask me anything.
     </div>
 
     <div class="inputBox">
@@ -111,15 +110,45 @@ Ask me anything.
       <button onclick="askAI()">Ask</button>
     </div>
   </div>
-
 </div>
 
 <script>
+// ===== DAILY LIMIT =====
+const DAILY_LIMIT = 10;
+const userKey = "prof_ai_user_limit";
+
+// Initialize user storage in localStorage
+if(!localStorage.getItem(userKey)) {
+  localStorage.setItem(userKey, JSON.stringify({count:0, date: new Date().toDateString()}));
+}
+
+function checkLimit() {
+  let userData = JSON.parse(localStorage.getItem(userKey));
+  let today = new Date().toDateString();
+  if(userData.date !== today) {
+    userData.count = 0;
+    userData.date = today;
+    localStorage.setItem(userKey, JSON.stringify(userData));
+  }
+  return userData.count < DAILY_LIMIT;
+}
+
+function incrementCount() {
+  let userData = JSON.parse(localStorage.getItem(userKey));
+  userData.count += 1;
+  localStorage.setItem(userKey, JSON.stringify(userData));
+}
+
+// ===== AI ASK FUNCTION =====
 async function askAI() {
+  if(!checkLimit()) {
+    document.getElementById("output").textContent = "Daily limit reached (10/day)";
+    return;
+  }
+
   const q = document.getElementById("question").value;
   const out = document.getElementById("output");
-
-  if (!q) return;
+  if(!q) return;
 
   out.textContent = "👨‍🏫 Professor is thinking...\n\n";
 
@@ -132,11 +161,12 @@ async function askAI() {
         body: JSON.stringify({ question: q })
       }
     );
-
     const data = await res.json();
-    out.textContent = data.answer;
-  } catch (e) {
+    out.textContent = data.answer || "No response from AI.";
+    incrementCount();
+  } catch(e) {
     out.textContent = "Error connecting to AI.";
+    console.error(e);
   }
 }
 </script>
