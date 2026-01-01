@@ -27,7 +27,7 @@ async function sendMessage(text){
         method:"POST",
         headers:{
             "Content-Type":"application/json",
-            "Authorization":"Bearer YOUR_API_KEY"
+            "Authorization":"Bearer AIzaSyDWMajQNKWwUlHtX-F-rDIukTMbPWTF5jc"
         },
         body: JSON.stringify({
             model:"gpt-5-mini",
