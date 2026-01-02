@@ -1,112 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Professor AI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{margin:0;height:100vh;background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;color:white}
-.glass{width:95%;height:90%;background:rgba(255,255,255,0.1);backdrop-filter:blur(15px);border-radius:20px;display:flex;padding:20px;box-sizing:border-box}
-.character{width:30%;display:flex;align-items:center;justify-content:center}
-.character img{width:100%;max-width:250px;animation:float 3s ease-in-out infinite}
-@keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-10px)}100%{transform:translateY(0)}}
-.chat{width:70%;display:flex;flex-direction:column}
-.output{flex:1;background:rgba(0,0,0,0.3);border-radius:15px;padding:15px;overflow-y:auto;white-space:pre-wrap}
-.inputBox{display:flex;margin-top:10px}
-input{flex:1;padding:12px;border-radius:10px;border:none;outline:none}
-button{margin-left:10px;padding:12px 20px;border:none;border-radius:10px;background:#00c6ff;color:black;font-weight:bold;cursor:pointer}
-button:active{transform:scale(0.95)}
-select{margin-right:10px;padding:10px;border-radius:8px;border:none;outline:none;background:white;color:black;font-weight:bold}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Professor AI</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="glass">
-  <div class="character">
-    <img src="https://i.imgur.com/6XgKQ5D.png" alt="Professor">
-  </div>
-
-  <div class="chat">
-    <div id="output" class="output">
-👨‍🏫 Professor AI ready. Ask me anything.
+  <div class="app">
+    <!-- Character side -->
+    <div class="character">
+      <img src="professor.png" alt="Professor AI" />
     </div>
 
-    <div class="inputBox">
-      <select id="langSelect">
-        <option value="en-US">English</option>
-        <option value="hi-IN">Hindi</option>
-        <option value="es-ES">Spanish</option>
-        <option value="fr-FR">French</option>
-        <option value="zh-CN">Chinese</option>
-      </select>
-      <input id="question" placeholder="Ask your question...">
-      <button onclick="askAI()">Ask</button>
-      <button onclick="startMic()">🎙️</button>
+    <!-- Chat area -->
+    <div class="chat">
+      <div id="output" class="glass">
+        Ask something… I will explain 📚
+      </div>
+
+      <textarea id="question" placeholder="Type your question here…"></textarea>
+
+      <div class="controls">
+        <select id="language">
+          <option>English</option>
+          <option>Hindi</option>
+          <option>Marathi</option>
+          <option>Urdu</option>
+        </select>
+
+        <button onclick="askAI()">Ask</button>
+        <button onclick="stopVoice()">🔇</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-const DAILY_LIMIT = 10;
-const userKey = "prof_ai_user_limit";
-
-if(!localStorage.getItem(userKey)){
-  localStorage.setItem(userKey, JSON.stringify({count:0,date:new Date().toDateString()}));
-}
-
-function checkLimit(){
-  let userData = JSON.parse(localStorage.getItem(userKey));
-  let today = new Date().toDateString();
-  if(userData.date!==today){userData.count=0;userData.date=today;localStorage.setItem(userKey,JSON.stringify(userData));}
-  return userData.count<DAILY_LIMIT;
-}
-function incrementCount(){let userData=JSON.parse(localStorage.getItem(userKey));userData.count+=1;localStorage.setItem(userKey,JSON.stringify(userData));}
-
-// ===== Mic Setup =====
-let recognition;
-function startMic(){
-  if(!('webkitSpeechRecognition' in window)) return alert('Mic not supported');
-  recognition = new webkitSpeechRecognition();
-  recognition.lang = document.getElementById("langSelect").value;
-  recognition.interimResults = false;
-  recognition.onresult = function(event){
-    document.getElementById("question").value = event.results[0][0].transcript;
-  };
-  recognition.start();
-}
-
-// ===== Ask AI =====
-async function askAI(){
-  if(!checkLimit()){document.getElementById("output").textContent="Daily limit reached (10/day)";return;}
-  const q=document.getElementById("question").value;
-  if(!q) return;
-  const selectedLang = document.getElementById("langSelect").value;
-  const out=document.getElementById("output");
-  out.textContent="👨‍🏫 Professor is thinking...\n\n";
-  try{
-    const res = await fetch("https://jolly-sky-a255.harshpure6565.workers.dev/ask",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({question:q,lang:selectedLang})
-    });
-    const data = await res.json();
-    out.textContent = data.answer || "No response from AI.";
-    incrementCount();
-    speakAnswer(data.answer, selectedLang);
-  }catch(e){
-    out.textContent="Error connecting to AI.";
-    console.error(e);
-  }
-}
-
-// ===== Text to Speech =====
-function speakAnswer(text, lang){
-  if(!window.speechSynthesis) return;
-  const utter=new SpeechSynthesisUtterance(text);
-  utter.lang = lang;
-  window.speechSynthesis.speak(utter);
-}
-</script>
-
+  <script src="script.js"></script>
 </body>
 </html>
