@@ -1,4 +1,4 @@
-const WORKER_URL = "https://YOUR-WORKER-URL.workers.dev";
+const WORKER_URL = "jolly-sky-a255.harshpure6565.workers.dev";
 
 async function askAI() {
   const q = document.getElementById("question").value.trim();
