@@ -1,55 +1,48 @@
-const WORKER_URL = "jolly-sky-a255.harshpure6565.workers.dev";
+const WORKER_URL = "https://jolly-sky-a255.harshpure6565.workers.dev";
 
 async function askAI() {
-  const q = document.getElementById("question").value.trim();
-  const out = document.getElementById("output");
-  const lang = document.getElementById("language").value;
+  const input = document.getElementById("question");
+  const output = document.getElementById("output");
 
-  if (!q) {
-    out.innerText = "Question likh pehle.";
+  const text = input.value.trim();
+  if (!text) {
+    output.innerText = "Pehle kuch likh.";
     return;
   }
 
-  out.innerText = "Professor AI soch raha hai…";
+  output.innerText = "Professor AI soch raha hai…";
 
   try {
-    const res = await fetch(WORKER_URL + "/ask", {
+    const res = await fetch(WORKER_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: q, language: lang })
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        message: text   // ✅ VERY IMPORTANT
+      })
     });
 
     const data = await res.json();
 
-    if (!data.answer) {
-      out.innerText = "No response from AI.";
-      return;
+    if (data.error) {
+      output.innerText = data.error;
+    } else {
+      output.innerText = data.response || "No reply";
+      speak(data.response);
     }
 
-    out.innerText = data.answer;
-    speak(data.answer, lang);
-
   } catch (e) {
-    out.innerText = "Server connect nahi ho raha.";
+    output.innerText = "Server connect nahi ho raha.";
+    console.error(e);
   }
 }
 
-function speak(text, lang) {
-  if (!window.speechSynthesis) return;
-
+// 🔊 Voice Output
+function speak(text) {
+  if (!text) return;
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "en-IN";
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-
-  if (lang === "Hindi") u.lang = "hi-IN";
-  else if (lang === "Marathi") u.lang = "mr-IN";
-  else if (lang === "Urdu") u.lang = "ur-IN";
-  else u.lang = "en-US";
-
-  u.rate = 1;
-  u.pitch = 1;
-  speechSynthesis.speak(u);
-}
-
-function stopVoice() {
-  speechSynthesis.cancel();
+  speechSynthesis.speak(utter);
 }
