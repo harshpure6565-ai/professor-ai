@@ -1,528 +1,77 @@
-/* ====================================
-   GLOBAL STYLES & RESET
-   ==================================== */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-:root {
-    /* Color Palette */
-    --primary-color: #6366f1;
-    --primary-dark: #4f46e5;
-    --secondary-color: #8b5cf6;
-    --success-color: #10b981;
-    --error-color: #ef4444;
-    --text-dark: #1f2937;
-    --text-light: #6b7280;
-    --bg-light: #f9fafb;
-    --white: #ffffff;
-    
-    /* Glassmorphism */
-    --glass-bg: rgba(255, 255, 255, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.3);
-    --glass-shadow: rgba(0, 0, 0, 0.1);
-    
-    /* Spacing */
-    --spacing-xs: 0.5rem;
-    --spacing-sm: 1rem;
-    --spacing-md: 1.5rem;
-    --spacing-lg: 2rem;
-    --spacing-xl: 3rem;
-    
-    /* Border Radius */
-    --radius-sm: 0.5rem;
-    --radius-md: 1rem;
-    --radius-lg: 1.5rem;
-    --radius-full: 9999px;
-    
-    /* Transitions */
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
-    --transition-slow: 0.5s ease;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: var(--text-dark);
-    overflow-x: hidden;
-    min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
 }
 
-/* ====================================
-   ANIMATED BACKGROUND CAPTIONS
-   ==================================== */
-.captions-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    z-index: 0;
-    opacity: 0.15;
-    pointer-events: none;
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: var(--white);
-    line-height: 2;
-    word-wrap: break-word;
-    padding: 2rem;
+.app {
+  display: flex;
+  height: 100vh;
+  padding: 10px;
 }
 
-/* ====================================
-   MAIN CONTAINER
-   ==================================== */
-.container {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: var(--spacing-lg);
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: var(--spacing-lg);
-    min-height: 100vh;
+.character {
+  width: 35%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
 }
 
-/* ====================================
-   PROFESSOR SECTION
-   ==================================== */
-.professor-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
+.character img {
+  width: 100%;
+  max-width: 180px;
+  animation: idle 3s ease-in-out infinite;
 }
 
-.professor-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: 0 8px 32px var(--glass-shadow);
-    text-align: center;
-    animation: fadeInUp 0.6s ease;
+@keyframes idle {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-.professor-image {
-    margin-bottom: var(--spacing-md);
+.chat {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.avatar {
-    width: 120px;
-    height: 120px;
-    margin: 0 auto var(--spacing-sm);
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+.glass {
+  flex: 1;
+  padding: 15px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  overflow-y: auto;
 }
 
-.avatar-icon {
-    font-size: 4rem;
+textarea {
+  width: 100%;
+  height: 70px;
+  border-radius: 12px;
+  border: none;
+  padding: 10px;
+  resize: none;
 }
 
-.status-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: var(--spacing-xs);
-    color: var(--success-color);
-    font-size: 0.875rem;
-    font-weight: 500;
+.controls {
+  display: flex;
+  gap: 6px;
 }
 
-.status-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--success-color);
-    border-radius: var(--radius-full);
-    animation: pulse 2s infinite;
+select, button {
+  flex: 1;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+  font-weight: 600;
 }
 
-.professor-name {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: var(--spacing-xs);
-}
-
-.professor-tagline {
-    font-size: 0.95rem;
-    color: var(--text-light);
-    line-height: 1.5;
-    margin-bottom: var(--spacing-md);
-}
-
-.usage-counter {
-    background: rgba(99, 102, 241, 0.1);
-    padding: var(--spacing-sm);
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.usage-counter span {
-    font-size: 1.25rem;
-    color: var(--primary-dark);
-}
-
-/* ====================================
-   CHAT SECTION
-   ==================================== */
-.chat-section {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
-
-.chat-header {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: 0 8px 32px var(--glass-shadow);
-    text-align: center;
-    animation: fadeInUp 0.6s ease 0.1s both;
-}
-
-.chat-header h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text-dark);
-    margin-bottom: var(--spacing-xs);
-}
-
-.chat-header p {
-    font-size: 1rem;
-    color: var(--text-light);
-}
-
-.chat-container {
-    flex: 1;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    box-shadow: 0 8px 32px var(--glass-shadow);
-    overflow-y: auto;
-    max-height: 600px;
-    animation: fadeInUp 0.6s ease 0.2s both;
-}
-
-/* Custom Scrollbar */
-.chat-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.chat-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: var(--radius-sm);
-}
-
-.chat-container::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: var(--radius-sm);
-}
-
-.chat-container::-webkit-scrollbar-thumb:hover {
-    background: var(--primary-dark);
-}
-
-/* ====================================
-   MESSAGES
-   ==================================== */
-.message {
-    margin-bottom: var(--spacing-md);
-    animation: slideIn 0.3s ease;
-}
-
-.message-content {
-    padding: var(--spacing-md);
-    border-radius: var(--radius-md);
-    line-height: 1.6;
-    font-size: 0.95rem;
-}
-
-.user-message .message-content {
-    background: var(--primary-color);
-    color: var(--white);
-    margin-left: auto;
-    max-width: 80%;
-    border-bottom-right-radius: var(--spacing-xs);
-}
-
-.bot-message .message-content {
-    background: var(--white);
-    color: var(--text-dark);
-    max-width: 85%;
-    border-bottom-left-radius: var(--spacing-xs);
-    box-shadow: 0 2px 8px var(--glass-shadow);
-}
-
-.bot-message .message-content p {
-    margin-bottom: var(--spacing-sm);
-}
-
-.bot-message .message-content p:last-child {
-    margin-bottom: 0;
-}
-
-/* ====================================
-   INPUT SECTION
-   ==================================== */
-.input-section {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
-    box-shadow: 0 8px 32px var(--glass-shadow);
-    animation: fadeInUp 0.6s ease 0.3s both;
-}
-
-.input-container {
-    display: flex;
-    gap: var(--spacing-sm);
-    align-items: center;
-}
-
-#userInput {
-    flex: 1;
-    padding: var(--spacing-md);
-    border: 2px solid transparent;
-    border-radius: var(--radius-md);
-    font-size: 1rem;
-    background: var(--white);
-    color: var(--text-dark);
-    transition: border-color var(--transition-fast);
-}
-
-#userInput:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-.input-btn {
-    width: 48px;
-    height: 48px;
-    border: none;
-    border-radius: var(--radius-md);
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.camera-btn {
-    background: #f59e0b;
-    color: var(--white);
-}
-
-.camera-btn:hover {
-    background: #d97706;
-    transform: scale(1.05);
-}
-
-.mic-btn {
-    background: var(--error-color);
-    color: var(--white);
-}
-
-.mic-btn:hover {
-    background: #dc2626;
-    transform: scale(1.05);
-}
-
-.mic-btn.recording {
-    animation: pulse 1s infinite;
-}
-
-.send-btn {
-    background: var(--primary-color);
-    color: var(--white);
-}
-
-.send-btn:hover {
-    background: var(--primary-dark);
-    transform: scale(1.05);
-}
-
-.send-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.char-counter {
-    text-align: right;
-    font-size: 0.875rem;
-    color: var(--text-light);
-    margin-top: var(--spacing-xs);
-}
-
-/* ====================================
-   AD CONTAINERS
-   ==================================== */
-.ad-container {
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
-    min-height: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 32px var(--glass-shadow);
-}
-
-/* ====================================
-   LOADING OVERLAY
-   ==================================== */
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    z-index: 1000;
-}
-
-.loading-overlay.active {
-    display: flex;
-}
-
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top-color: var(--white);
-    border-radius: var(--radius-full);
-    animation: spin 1s linear infinite;
-}
-
-.loading-overlay p {
-    color: var(--white);
-    margin-top: var(--spacing-md);
-    font-size: 1.1rem;
-}
-
-/* ====================================
-   ANIMATIONS
-   ==================================== */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.7;
-        transform: scale(0.95);
-    }
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* ====================================
-   RESPONSIVE DESIGN
-   ==================================== */
-@media (max-width: 1024px) {
-    .container {
-        grid-template-columns: 1fr;
-    }
-    
-    .professor-section {
-        order: 2;
-    }
-    
-    .chat-section {
-        order: 1;
-    }
-}
-
-@media (max-width: 768px) {
-    .container {
-        padding: var(--spacing-sm);
-        gap: var(--spacing-sm);
-    }
-    
-    .chat-header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .chat-container {
-        max-height: 400px;
-    }
-    
-    .input-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 1.25rem;
-    }
-    
-    #userInput {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .avatar {
-        width: 100px;
-        height: 100px;
-    }
-    
-    .avatar-icon {
-        font-size: 3rem;
-    }
-    
-    .professor-name {
-        font-size: 1.5rem;
-    }
-    
-    .input-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
+button {
+  background: #00c6ff;
+  color: black;
 }
